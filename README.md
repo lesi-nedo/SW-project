@@ -1,7 +1,7 @@
 # SW-project
 Semantic web project of 2024-01-10
 
-#Text:
+# Text:
 
 Instructions for the submission of the solution
 The candidate has to submit two files: (i) one file containing the ontology in Turtle format, with extension
