@@ -1,0 +1,36 @@
+Q8.
+  1. would be:
+    :renManuscript2 :hasAuthor :author3 .
+    
+    or in protege:
+    add to renManuscript1 Object property assertions, "hasAuthor author3"
+    
+    It violates the constraint that a manuscript should have exactly one writer, i.e., a functional object axiom. 
+    
+  2. would be:
+     :book4 :hasPrice "34"^^xsd:string .
+     
+     or in protege:
+     create a Data property assertion, "hasPrice 34 of type string"
+     
+     It violates the data type axioms, which state that the 'hasPrice' data property should be a positive integer.
+     
+Q9.
+  SubObjectPropertyOf(ObjectPropertyChain (isPublishing hasManuscript workBelongsTo) hasPublicationAgreement)
+  
+Q10.
+  It needs to satisfy:
+    1. owl:topDataProperty
+     It does satisfy cause all datatypes of my ontology are sub-property of topDataProperty.
+      
+    2. Datatypes
+     My ontology is satisfying because I've used only data types included in the datatype map of OWL.
+     
+    3. Simple Roles
+      My ontology is satisfying as it avoids using forbidden composite object properties in axioms.
+      
+    4. Property Hierarchy
+       SubObjectPropertyOf(ObjectPropertyChain (isPublishing hasManuscript workBelongsTo) hasPublicationAgreement) does not inroduce cycles, so it does.
+       
+    5. Anonymous Individuals
+      My ontology doesn't include anonymous individuals, so it is considered satisfied.
