@@ -1,0 +1,758 @@
+@prefix : <http://www.semanticweb.org/Nedobiychuk/exam-project/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@base <http://www.semanticweb.org/Nedobiychuk/exam-project/> .
+
+<http://www.semanticweb.org/Nedobiychuk/exam-project/> rdf:type owl:Ontology ;
+                                                        owl:versionIRI <http://www.semanticweb.org/Nedobiychuk/exam-project/2024-01-10> .
+
+#################################################################
+#    Object Properties
+#################################################################
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/hasAccordedWith
+:hasAccordedWith rdf:type owl:ObjectProperty ;
+                 owl:inverseOf :hasPublicationAgreement ;
+                 rdf:type owl:AsymmetricProperty ,
+                          owl:IrreflexiveProperty ;
+                 rdfs:domain <http://schema.org/Library> ;
+                 rdfs:range :Publisher ;
+                 rdfs:comment "hasAccordedWith describes that a library has established an agreement to permit the publisher to include the manuscript."@en .
+
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/hasAttribute
+:hasAttribute rdf:type owl:ObjectProperty ;
+              owl:propertyDisjointWith :isLocatedIn ,
+                                       :sellsFor ;
+              rdfs:comment "is super-property of hasGenre and hasAuthor"@en .
+
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/hasAuthor
+:hasAuthor rdf:type owl:ObjectProperty ;
+           rdfs:subPropertyOf :hasAttribute ,
+                              [ owl:inverseOf :isAttributeOf
+                              ] ;
+           owl:inverseOf :isAuthorOf ;
+           rdf:type owl:FunctionalProperty ;
+           rdfs:domain <http://purl.org/ontology/bibo/Manuscript> ;
+           rdfs:range <http://xmlns.com/foaf/0.1/Person> ;
+           rdfs:comment "The hasAuthor property establishes the connection between the manuscript and its author."@en .
+
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/hasGenre
+:hasGenre rdf:type owl:ObjectProperty ;
+          rdfs:subPropertyOf :hasAttribute ,
+                             [ owl:inverseOf :isAttributeOf
+                             ] ;
+          owl:inverseOf :isGenreOf ;
+          rdfs:domain <http://purl.org/ontology/bibo/Manuscript> ;
+          rdfs:range <http://dbpedia.org/ontology/LiteraryGenre> ;
+          rdfs:comment "The hasGenre property establishes the connection between the manuscript and its genre."@en .
+
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/hasManuscript
+:hasManuscript rdf:type owl:ObjectProperty ;
+               owl:inverseOf :isPartOf ;
+               rdf:type owl:AsymmetricProperty ,
+                        owl:IrreflexiveProperty ;
+               rdfs:domain :Book ;
+               rdfs:range <http://purl.org/ontology/bibo/Manuscript> ;
+               rdfs:comment "The hasManuscript property indicates that the manuscript is contained within the book."@en .
+
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/hasPublicationAgreement
+:hasPublicationAgreement rdf:type owl:ObjectProperty ,
+                                  owl:AsymmetricProperty ,
+                                  owl:IrreflexiveProperty ;
+                         rdfs:domain :Publisher ;
+                         rdfs:range <http://schema.org/Library> ;
+                         owl:propertyChainAxiom ( :isPublishing
+                                                  :hasManuscript
+                                                  :workBelongsTo
+                                                ) ;
+                         rdfs:comment "The hasPublicAgreement property signifies that a publisher has entered into an agreement with a library to publish manuscripts in their books."@en .
+
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/hasWork
+:hasWork rdf:type owl:ObjectProperty ;
+         owl:inverseOf :workBelongsTo ;
+         rdf:type owl:InverseFunctionalProperty ;
+         rdfs:domain <http://schema.org/Library> ;
+         rdfs:range <http://purl.org/ontology/bibo/Manuscript> ;
+         rdfs:comment "hasWork indicates that a manuscript is held in the library's collection."@en .
+
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/isAttributeOf
+:isAttributeOf rdf:type owl:ObjectProperty ;
+               rdfs:comment "super-propery of isAuthorOf, isGenreOf"@en .
+
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/isAuthorOf
+:isAuthorOf rdf:type owl:ObjectProperty ;
+            rdfs:subPropertyOf :isAttributeOf ,
+                               [ owl:inverseOf :hasAttribute
+                               ] ;
+            rdf:type owl:InverseFunctionalProperty ;
+            rdfs:domain <http://xmlns.com/foaf/0.1/Person> ;
+            rdfs:range <http://purl.org/ontology/bibo/Manuscript> ;
+            rdfs:comment "\"isAuthor signifies that the author is the creator of the manuscript."@en .
+
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/isGenreOf
+:isGenreOf rdf:type owl:ObjectProperty ;
+           rdfs:subPropertyOf :isAttributeOf ,
+                              [ owl:inverseOf :hasAttribute
+                              ] ;
+           rdfs:domain <http://dbpedia.org/ontology/LiteraryGenre> ;
+           rdfs:range <http://purl.org/ontology/bibo/Manuscript> ;
+           rdfs:comment "isGenre indicates that the genre describes the manuscript."@en .
+
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/isLocatedIn
+:isLocatedIn rdf:type owl:ObjectProperty ;
+             owl:inverseOf :isLocationOf ;
+             rdf:type owl:FunctionalProperty ;
+             rdfs:domain <http://schema.org/Library> ;
+             rdfs:range <http://schema.org/Place> ;
+             rdfs:comment "isLocatedIn relates a library to a place."@en .
+
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/isLocationOf
+:isLocationOf rdf:type owl:ObjectProperty ,
+                       owl:InverseFunctionalProperty ;
+              rdfs:domain <http://schema.org/Place> ;
+              rdfs:range <http://schema.org/Library> ;
+              rdfs:comment "isLocationOfn relates a place to a library."@en .
+
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/isPartOf
+:isPartOf rdf:type owl:ObjectProperty ,
+                   owl:AsymmetricProperty ,
+                   owl:TransitiveProperty ,
+                   owl:IrreflexiveProperty ;
+          rdfs:domain <http://purl.org/ontology/bibo/Manuscript> ;
+          rdfs:range :Book ;
+          rdfs:comment "The hasPart property indicates that the manuscript is contained within the book." .
+
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/isPublishedBy
+:isPublishedBy rdf:type owl:ObjectProperty ;
+               owl:inverseOf :isPublishing ;
+               rdf:type owl:FunctionalProperty ;
+               rdfs:domain :Book ;
+               rdfs:range :Publisher ;
+               rdfs:comment "isPublishedBy links a book to its publisher."@en .
+
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/isPublishing
+:isPublishing rdf:type owl:ObjectProperty ,
+                       owl:InverseFunctionalProperty ;
+              rdfs:domain :Publisher ;
+              rdfs:range :Book ;
+              rdfs:comment "isPublishing links a publisher to a book." .
+
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/isSellingThrough
+:isSellingThrough rdf:type owl:ObjectProperty ;
+                  owl:inverseOf :sellsFor ;
+                  rdfs:domain :Publisher ;
+                  rdfs:range <http://schema.org/BookStore> ;
+                  rdfs:comment "isSellsThrough indicates that a publisher relies on a bookstore to sell their books."@en .
+
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/sellsFor
+:sellsFor rdf:type owl:ObjectProperty ;
+          rdfs:domain <http://schema.org/BookStore> ;
+          rdfs:range :Publisher ;
+          rdfs:comment "sellsFor indicates that a bookstore is in charge on behalf of a bookstore to sell books."@en .
+
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/workBelongsTo
+:workBelongsTo rdf:type owl:ObjectProperty ,
+                        owl:FunctionalProperty ;
+               rdfs:domain <http://purl.org/ontology/bibo/Manuscript> ;
+               rdfs:range <http://schema.org/Library> ;
+               rdfs:comment "workBelongsTo indicates that a manuscript is held in the library's collection." .
+
+
+#################################################################
+#    Data properties
+#################################################################
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/hasDate
+:hasDate rdf:type owl:DatatypeProperty ,
+                  owl:FunctionalProperty ;
+         rdfs:domain <http://purl.org/ontology/bibo/Manuscript> ;
+         rdfs:range xsd:dateTime ;
+         rdfs:comment "hasDate associates a manuscript with its date of creation."@en .
+
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/hasISBN
+:hasISBN rdf:type owl:DatatypeProperty ;
+         rdfs:domain :Book ;
+         rdfs:range xsd:string ;
+         rdfs:comment "hasISBN is the ISBN of the book"@en .
+
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/hasName
+:hasName rdf:type owl:DatatypeProperty ;
+         rdfs:domain :Publisher ;
+         rdfs:range xsd:string ;
+         owl:propertyDisjointWith :hasTitle ;
+         rdfs:comment "hasName represents the given name of a publisher."@en .
+
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/hasPrice
+:hasPrice rdf:type owl:DatatypeProperty ;
+          rdfs:domain :Book ;
+          rdfs:range xsd:positiveInteger ;
+          owl:propertyDisjointWith :publisherID ;
+          rdfs:comment "hasPrice is a data property that signifies the price of a book."@en .
+
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/hasTitle
+:hasTitle rdf:type owl:DatatypeProperty ;
+          rdfs:domain :IntellectualWork ;
+          rdfs:range rdf:langString ;
+          rdfs:comment "hasTitle is a data property that associates the title with a book."@en .
+
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/manuscriptID
+:manuscriptID rdf:type owl:DatatypeProperty ,
+                       owl:FunctionalProperty ;
+              rdfs:domain <http://purl.org/ontology/bibo/Manuscript> ;
+              rdfs:range xsd:string ;
+              rdfs:comment "manuscriptID is the assigned ID for the manuscript."@en .
+
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/publisherID
+:publisherID rdf:type owl:DatatypeProperty ,
+                      owl:FunctionalProperty ;
+             rdfs:domain :Publisher ;
+             rdfs:range xsd:positiveInteger ;
+             rdfs:comment "publisherID is the assigned ID for the publisher."@en .
+
+
+#################################################################
+#    Classes
+#################################################################
+
+###  http://dbpedia.org/ontology/LiteraryGenre
+<http://dbpedia.org/ontology/LiteraryGenre> rdf:type owl:Class ;
+                                            owl:disjointWith <http://purl.org/ontology/bibo/Manuscript> ,
+                                                             <http://schema.org/BookStore> ,
+                                                             <http://schema.org/Library> ,
+                                                             <http://schema.org/Place> ,
+                                                             :Book ,
+                                                             :MedievalManuscript ,
+                                                             :PrivateLibrary ,
+                                                             :PublicLibrary ,
+                                                             :Publisher ,
+                                                             :RenaissanceManuscript ,
+                                                             <http://xmlns.com/foaf/0.1/Person> ;
+                                            rdfs:comment "Encompasses all genres of literature"@en .
+
+
+###  http://purl.org/ontology/bibo/Manuscript
+<http://purl.org/ontology/bibo/Manuscript> rdf:type owl:Class ;
+                                           rdfs:subClassOf :IntellectualWork ,
+                                                           [ rdf:type owl:Restriction ;
+                                                             owl:onProperty :hasGenre ;
+                                                             owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                                             owl:onClass <http://dbpedia.org/ontology/LiteraryGenre>
+                                                           ] ,
+                                                           [ rdf:type owl:Restriction ;
+                                                             owl:onProperty :isPartOf ;
+                                                             owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                                             owl:onClass :Book
+                                                           ] ,
+                                                           [ rdf:type owl:Restriction ;
+                                                             owl:onProperty :hasAuthor ;
+                                                             owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                                             owl:onClass <http://xmlns.com/foaf/0.1/Person>
+                                                           ] ,
+                                                           [ rdf:type owl:Restriction ;
+                                                             owl:onProperty :workBelongsTo ;
+                                                             owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                                             owl:onClass <http://schema.org/Library>
+                                                           ] ,
+                                                           [ rdf:type owl:Restriction ;
+                                                             owl:onProperty :hasDate ;
+                                                             owl:allValuesFrom xsd:dateTime
+                                                           ] ,
+                                                           [ rdf:type owl:Restriction ;
+                                                             owl:onProperty :hasTitle ;
+                                                             owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                                             owl:onDataRange rdf:langString
+                                                           ] ,
+                                                           [ rdf:type owl:Restriction ;
+                                                             owl:onProperty :manuscriptID ;
+                                                             owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                                             owl:onDataRange xsd:string
+                                                           ] ;
+                                           owl:disjointWith <http://schema.org/BookStore> ,
+                                                            <http://schema.org/Library> ,
+                                                            <http://schema.org/Place> ,
+                                                            :Book ,
+                                                            :PrivateLibrary ,
+                                                            :PublicLibrary ,
+                                                            :Publisher ,
+                                                            <http://xmlns.com/foaf/0.1/Person> ;
+                                           rdfs:comment "Incorporates all the manuscripts."@en .
+
+
+###  http://schema.org/BookStore
+<http://schema.org/BookStore> rdf:type owl:Class ;
+                              rdfs:subClassOf <http://schema.org/Organization> ;
+                              owl:disjointWith <http://schema.org/Library> ,
+                                               <http://schema.org/Place> ,
+                                               :Book ,
+                                               :MedievalManuscript ,
+                                               :PrivateLibrary ,
+                                               :PublicLibrary ,
+                                               :Publisher ,
+                                               :RenaissanceManuscript ,
+                                               <http://xmlns.com/foaf/0.1/Person> ;
+                              rdfs:comment "An entity responsible for selling books." .
+
+
+###  http://schema.org/Library
+<http://schema.org/Library> rdf:type owl:Class ;
+                            rdfs:subClassOf [ rdf:type owl:Restriction ;
+                                              owl:onProperty :hasAccordedWith ;
+                                              owl:someValuesFrom :Publisher
+                                            ] ,
+                                            [ rdf:type owl:Restriction ;
+                                              owl:onProperty :isLocatedIn ;
+                                              owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                              owl:onClass <http://schema.org/Place>
+                                            ] ;
+                            owl:disjointWith <http://schema.org/Place> ,
+                                             :Book ,
+                                             :MedievalManuscript ,
+                                             :Publisher ,
+                                             :RenaissanceManuscript ,
+                                             <http://xmlns.com/foaf/0.1/Person> ;
+                            rdfs:comment "A class to define the concept of a library."@en .
+
+
+###  http://schema.org/Organization
+<http://schema.org/Organization> rdf:type owl:Class .
+
+
+###  http://schema.org/Place
+<http://schema.org/Place> rdf:type owl:Class ;
+                          owl:disjointWith :Book ,
+                                           :MedievalManuscript ,
+                                           :PrivateLibrary ,
+                                           :PublicLibrary ,
+                                           :Publisher ,
+                                           :RenaissanceManuscript ,
+                                           <http://xmlns.com/foaf/0.1/Person> ;
+                          rdfs:comment "The general concept of a place."@en .
+
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/Book
+:Book rdf:type owl:Class ;
+      rdfs:subClassOf :IntellectualWork ,
+                      [ rdf:type owl:Restriction ;
+                        owl:onProperty :isPublishedBy ;
+                        owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                        owl:onClass :Publisher
+                      ] ,
+                      [ rdf:type owl:Restriction ;
+                        owl:onProperty :hasISBN ;
+                        owl:allValuesFrom xsd:string
+                      ] ,
+                      [ rdf:type owl:Restriction ;
+                        owl:onProperty :hasPrice ;
+                        owl:allValuesFrom xsd:positiveInteger
+                      ] ,
+                      [ rdf:type owl:Restriction ;
+                        owl:onProperty :hasTitle ;
+                        owl:allValuesFrom rdf:langString
+                      ] ;
+      owl:disjointWith :MedievalManuscript ,
+                       :PrivateLibrary ,
+                       :PublicLibrary ,
+                       :Publisher ,
+                       :RenaissanceManuscript ,
+                       <http://xmlns.com/foaf/0.1/Person> ;
+      rdfs:comment "Incorporates all the books."@en .
+
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/IntellectualWork
+:IntellectualWork rdf:type owl:Class .
+
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/MedievalManuscript
+:MedievalManuscript rdf:type owl:Class ;
+                    rdfs:subClassOf <http://purl.org/ontology/bibo/Manuscript> ;
+                    owl:disjointWith :PrivateLibrary ,
+                                     :PublicLibrary ,
+                                     :Publisher ,
+                                     <http://xmlns.com/foaf/0.1/Person> .
+
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/PrivateLibrary
+:PrivateLibrary rdf:type owl:Class ;
+                rdfs:subClassOf <http://schema.org/Library> ;
+                owl:disjointWith :Publisher ,
+                                 :RenaissanceManuscript ,
+                                 <http://xmlns.com/foaf/0.1/Person> ;
+                rdfs:comment "A class to define the concept of a private library."@en .
+
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/PublicLibrary
+:PublicLibrary rdf:type owl:Class ;
+               rdfs:subClassOf <http://schema.org/Library> ;
+               owl:disjointWith :Publisher ,
+                                :RenaissanceManuscript ,
+                                <http://xmlns.com/foaf/0.1/Person> ;
+               rdfs:comment "A class to define the concept of a public library."@en .
+
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/Publisher
+:Publisher rdf:type owl:Class ;
+           rdfs:subClassOf <http://schema.org/Organization> ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty :isPublishing ;
+                             owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger ;
+                             owl:onClass :Book
+                           ] ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty :isSellingThrough ;
+                             owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger ;
+                             owl:onClass <http://schema.org/BookStore>
+                           ] ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty :hasName ;
+                             owl:allValuesFrom xsd:string
+                           ] ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty :publisherID ;
+                             owl:allValuesFrom xsd:positiveInteger
+                           ] ;
+           owl:disjointWith :RenaissanceManuscript ,
+                            <http://xmlns.com/foaf/0.1/Person> ;
+           rdfs:comment "An entity responsible for publishing books."@en .
+
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/RenaissanceManuscript
+:RenaissanceManuscript rdf:type owl:Class ;
+                       rdfs:subClassOf <http://purl.org/ontology/bibo/Manuscript> ;
+                       owl:disjointWith <http://xmlns.com/foaf/0.1/Person> .
+
+
+###  http://xmlns.com/foaf/0.1/Person
+<http://xmlns.com/foaf/0.1/Person> rdf:type owl:Class ;
+                                   rdfs:comment "Serves as the author of the manuscript."@en .
+
+
+#################################################################
+#    Individuals
+#################################################################
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/author1
+:author1 rdf:type owl:NamedIndividual ,
+                  <http://xmlns.com/foaf/0.1/Person> ;
+         :isAttributeOf :medManuscript1 ,
+                        :medManuscript2 ;
+         :isAuthorOf :medManuscript1 ,
+                     :medManuscript2 .
+
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/author2
+:author2 rdf:type owl:NamedIndividual ,
+                  <http://xmlns.com/foaf/0.1/Person> ;
+         :isAttributeOf :renManuscript1 ;
+         :isAuthorOf :renManuscript1 .
+
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/author3
+:author3 rdf:type owl:NamedIndividual ,
+                  <http://xmlns.com/foaf/0.1/Person> ;
+         :isAttributeOf :renManuscript2 ;
+         :isAuthorOf :renManuscript2 .
+
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/book1
+:book1 rdf:type owl:NamedIndividual ,
+                :Book ,
+                :IntellectualWork ;
+       owl:differentFrom :book2 ;
+       :hasManuscript :medManuscript1 ,
+                      :renManuscript1 ;
+       :isPublishedBy :publisher1 ;
+       :hasISBN "978-3-16-148410-0" ;
+       :hasPrice "23"^^xsd:positiveInteger ;
+       :hasTitle "First Book"@en .
+
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/book2
+:book2 rdf:type owl:NamedIndividual ,
+                :Book ,
+                :IntellectualWork ;
+       :hasManuscript :medManuscript2 ;
+       :isPublishedBy :publisher2 ;
+       :hasISBN "978-1-234567-89-0" ;
+       :hasPrice "33"^^xsd:positiveInteger ;
+       :hasTitle "Second Book"@en .
+
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/book3
+:book3 rdf:type owl:NamedIndividual ,
+                :Book ,
+                :IntellectualWork ;
+       :hasManuscript :medManuscript2 ;
+       :isPublishedBy :publisher2 ;
+       :hasISBN "978-0-765432-10-9" ;
+       :hasPrice "432"^^xsd:positiveInteger ;
+       :hasTitle "Third Book"@en .
+
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/book4
+:book4 rdf:type owl:NamedIndividual ,
+                :Book ,
+                :IntellectualWork ;
+       :hasManuscript :renManuscript1 ,
+                      :renManuscript2 ;
+       :isPublishedBy :publisher1 ;
+       :hasISBN "978-1-455632-10-2" ;
+       :hasPrice "34"^^xsd:positiveInteger ;
+       :hasTitle "Fourth Book"@en .
+
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/bookStore1
+:bookStore1 rdf:type owl:NamedIndividual ,
+                     <http://schema.org/BookStore> ,
+                     <http://schema.org/Organization> ;
+            owl:differentFrom :bookStore2 ;
+            :sellsFor :publisher1 ,
+                      :publisher2 .
+
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/bookStore2
+:bookStore2 rdf:type owl:NamedIndividual ,
+                     <http://schema.org/BookStore> ,
+                     <http://schema.org/Organization> ;
+            :sellsFor :publisher1 ,
+                      :publisher2 .
+
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/bookStore3
+:bookStore3 rdf:type owl:NamedIndividual ,
+                     <http://schema.org/BookStore> ,
+                     <http://schema.org/Organization> .
+
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/genre1
+:genre1 rdf:type owl:NamedIndividual ,
+                 <http://dbpedia.org/ontology/LiteraryGenre> ;
+        owl:differentFrom :genre2 ;
+        :isAttributeOf :medManuscript1 ;
+        :isGenreOf :medManuscript1 .
+
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/genre2
+:genre2 rdf:type owl:NamedIndividual ,
+                 <http://dbpedia.org/ontology/LiteraryGenre> ;
+        :isAttributeOf :medManuscript2 ;
+        :isGenreOf :medManuscript2 .
+
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/genre3
+:genre3 rdf:type owl:NamedIndividual ,
+                 <http://dbpedia.org/ontology/LiteraryGenre> ;
+        :isAttributeOf :renManuscript1 ,
+                       :renManuscript2 ;
+        :isGenreOf :renManuscript1 ,
+                   :renManuscript2 .
+
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/medManuscript1
+:medManuscript1 rdf:type owl:NamedIndividual ,
+                         <http://purl.org/ontology/bibo/Manuscript> ,
+                         :IntellectualWork ,
+                         :MedievalManuscript ;
+                owl:differentFrom :medManuscript2 ;
+                :hasAttribute :author1 ,
+                              :genre1 ;
+                :hasAuthor :author1 ;
+                :hasGenre :genre1 ;
+                :isPartOf :book1 ;
+                :workBelongsTo :publicLibrary1 ;
+                :hasDate "1000-01-01T04:00:00"^^xsd:dateTime ;
+                :hasTitle "Medieval Manuscript 1"@en ;
+                :manuscriptID "7fKp9XcE4a" .
+
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/medManuscript2
+:medManuscript2 rdf:type owl:NamedIndividual ,
+                         <http://purl.org/ontology/bibo/Manuscript> ,
+                         :IntellectualWork ,
+                         :MedievalManuscript ;
+                :hasAttribute :author1 ,
+                              :genre2 ;
+                :hasAuthor :author1 ;
+                :hasGenre :genre2 ;
+                :isPartOf :book2 ,
+                          :book3 ;
+                :workBelongsTo :privateLibrary1 ;
+                :hasDate "1200-01-01T12:03:00"^^xsd:dateTime ;
+                :hasTitle "Medieval Manuscript 1"@en ;
+                :manuscriptID "R2hL8sWp5y" .
+
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/place1
+:place1 rdf:type owl:NamedIndividual ,
+                 <http://schema.org/Place> ;
+        owl:differentFrom :place2 ;
+        :isLocationOf :privateLibrary1 ,
+                      :publicLibrary1 .
+
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/place2
+:place2 rdf:type owl:NamedIndividual ,
+                 <http://schema.org/Place> ;
+        :isLocationOf :privateLibrary2 ,
+                      :publicLibrary2 .
+
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/privateLibrary1
+:privateLibrary1 rdf:type owl:NamedIndividual ,
+                          <http://schema.org/Library> ,
+                          :PrivateLibrary ;
+                 owl:differentFrom :privateLibrary2 ;
+                 :hasAccordedWith :publisher2 ;
+                 :hasWork :medManuscript2 ;
+                 :isLocatedIn :place1 .
+
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/privateLibrary2
+:privateLibrary2 rdf:type owl:NamedIndividual ,
+                          <http://schema.org/Library> ,
+                          :PrivateLibrary ;
+                 :hasAccordedWith :publisher1 ;
+                 :hasWork :renManuscript2 ;
+                 :isLocatedIn :place2 .
+
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/publicLibrary1
+:publicLibrary1 rdf:type owl:NamedIndividual ,
+                         <http://schema.org/Library> ,
+                         :PublicLibrary ;
+                owl:differentFrom :publicLibrary2 ;
+                :hasAccordedWith :publisher1 ;
+                :hasWork :medManuscript1 ;
+                :isLocatedIn :place1 .
+
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/publicLibrary2
+:publicLibrary2 rdf:type owl:NamedIndividual ,
+                         <http://schema.org/Library> ,
+                         :PublicLibrary ;
+                :hasAccordedWith :publisher1 ;
+                :hasWork :renManuscript1 ;
+                :isLocatedIn :place2 .
+
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/publisher1
+:publisher1 rdf:type owl:NamedIndividual ,
+                     <http://schema.org/Organization> ,
+                     :Publisher ;
+            owl:differentFrom :publisher2 ;
+            :hasPublicationAgreement :privateLibrary2 ,
+                                     :publicLibrary1 ,
+                                     :publicLibrary2 ;
+            :isPublishing :book1 ,
+                          :book4 ;
+            :isSellingThrough :bookStore1 ,
+                              :bookStore2 ;
+            :hasName "Publisher 1" ;
+            :publisherID "8372194056"^^xsd:positiveInteger .
+
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/publisher2
+:publisher2 rdf:type owl:NamedIndividual ,
+                     <http://schema.org/Organization> ,
+                     :Publisher ;
+            :hasPublicationAgreement :privateLibrary1 ;
+            :isPublishing :book2 ,
+                          :book3 ;
+            :isSellingThrough :bookStore1 ,
+                              :bookStore2 ;
+            :hasName "Publisher 2" .
+
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/renManuscript1
+:renManuscript1 rdf:type owl:NamedIndividual ,
+                         <http://purl.org/ontology/bibo/Manuscript> ,
+                         :IntellectualWork ,
+                         :RenaissanceManuscript ;
+                owl:differentFrom :renManuscript2 ;
+                :hasAttribute :author2 ,
+                              :genre3 ;
+                :hasAuthor :author2 ;
+                :hasGenre :genre3 ;
+                :isPartOf :book1 ,
+                          :book4 ;
+                :workBelongsTo :publicLibrary2 ;
+                :hasDate "1500-01-01T00:00:00"^^xsd:dateTime ;
+                :hasTitle "Renaissance Manuscript 1"@en ;
+                :manuscriptID "2rhp3XfE3a" .
+
+
+###  http://www.semanticweb.org/Nedobiychuk/exam-project/renManuscript2
+:renManuscript2 rdf:type owl:NamedIndividual ,
+                         <http://purl.org/ontology/bibo/Manuscript> ,
+                         :IntellectualWork ,
+                         :RenaissanceManuscript ;
+                :hasAttribute :author3 ,
+                              :genre3 ;
+                :hasAuthor :author3 ;
+                :hasGenre :genre3 ;
+                :isPartOf :book4 ;
+                :workBelongsTo :privateLibrary2 ;
+                :hasDate "1600-01-01T01:01:01"^^xsd:dateTime ;
+                :hasTitle "Renassance Manuscript 2"@en ;
+                :manuscriptID "1GHE9G1H11" .
+
+
+#################################################################
+#    General axioms
+#################################################################
+
+[ rdf:type owl:AllDisjointClasses ;
+  owl:members ( <http://dbpedia.org/ontology/LiteraryGenre>
+                <http://purl.org/ontology/bibo/Manuscript>
+                <http://schema.org/BookStore>
+                <http://schema.org/Library>
+                <http://schema.org/Place>
+                :Book
+                :Publisher
+                <http://xmlns.com/foaf/0.1/Person>
+              )
+] .
+
+
+[ rdf:type owl:AllDifferent ;
+  owl:distinctMembers ( :author1
+                        :author2
+                        :author3
+                      )
+] .
+
+
+[ rdf:type owl:AllDisjointProperties ;
+  owl:members ( :hasISBN
+                :manuscriptID
+                :publisherID
+              )
+] .
+
+
+###  Generated by the OWL API (version 4.5.26.2023-07-17T20:34:13Z) https://github.com/owlcs/owlapi
