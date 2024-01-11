@@ -34,3 +34,111 @@ Q10.
        
     5. Anonymous Individuals
       My ontology doesn't include anonymous individuals, so it is considered satisfied.
+      
+Q11.
+  Q11.1.
+    PREFIX : <http://www.semanticweb.org/Nedobiychuk/exam-project/>
+    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+    SELECT ?iriManu ?iriLib
+    WHERE {
+      ?iriManu :workBelongsTo ?iriLib .
+      ?iriManu :hasDate ?date .         
+      {?iriManu rdf:type :MedievalManuscript}
+      UNION
+      {?iriManu rdf:type :RenaissanceManuscript}
+      FILTER (?date > "1130"^^xsd:dateTime && ?date < "1250"^^xsd:dateTime)
+    }
+    
+  Q11.2
+    PREFIX : <http://www.semanticweb.org/Nedobiychuk/exam-project/>
+	PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+	SELECT ?iriBook ?title
+	WHERE {
+	  ?iriBook rdf:type :Book .
+	  ?iriBook :hasTitle ?title .      
+	}
+
+	ORDER BY ?title
+	OFFSET 2
+	LIMIT 3
+	
+  Q11.3
+    PREFIX : <http://www.semanticweb.org/Nedobiychuk/exam-project/>
+	PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+	SELECT ?iriBook ?isbn ?titleBook ?iriPublisher ?iriManu ?manuTitle
+	WHERE {
+	  ?iriBook rdf:type :Book .
+	  ?iriBook :hasTitle ?titleBook .
+	  ?iriBook :hasISBN ?isbn .
+	  ?iriBook :isPublishedBy ?iriPublisher .
+	  ?iriBook :hasManuscript ?iriManu .
+	  ?iriManu :hasTitle ?manuTitle .
+	  
+	}
+   
+  Q11.4
+    PREFIX : <http://www.semanticweb.org/Nedobiychuk/exam-project/>
+	PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+	SELECT ?iriBook ?disPrice
+	WHERE {
+	  ?iriBook rdf:type :Book ;
+		       :hasTitle ?titleBook ;
+		       :hasPrice ?price .
+	   BIND ((?price * 0.8) AS ?disPrice )
+	  
+	}
+ 
+  Q11.5
+    PREFIX : <http://www.semanticweb.org/Nedobiychuk/exam-project/>
+	PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+	PREFIX bibo: <http://purl.org/ontology/bibo/>
+
+	SELECT ?title
+	WHERE {
+	  ?iriManu rdf:type bibo:Manuscript ;
+		       :hasTitle ?title .
+	  MINUS {
+		?iriManu rdf:type :RenaissanceManuscript
+	  }
+	  
+	}
+
+  Q11.6
+    PREFIX : <http://www.semanticweb.org/Nedobiychuk/exam-project/>
+	PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+	SELECT (SAMPLE(?title) AS ?Title) (MAX(?price) AS ?maxPrice)
+	WHERE {
+	  ?iriBook rdf:type :Book ;
+		       :hasPrice ?price ;
+               :hasTitle ?title ;
+               :isPublishedBy ?iriPublisher .
+	
+	  
+	}
+
+    GROUP BY ?iriPublisher
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+ 
